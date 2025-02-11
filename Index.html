@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Descubre tu Ikigai</title>
+  <!-- Dependencias: html2canvas y jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* Tonos pasteles con alto contraste */
+      --terracota: #D35400;      /* Terracota fuerte */
+      --chocolate: #5D4037;       /* Chocolate oscuro */
+      --greige: #BDC3C7;         /* Grisáceo */
+      --rosado-claro: #F1948A;     /* Rosado claro */
+      --selected: #A0522D;        /* Sienna oscura */
+      --btn-hover: #8B4513;       /* Marrón para hover */
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--greige), var(--rosado-claro));
+      color: var(--chocolate);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    /* Contenedor general */
+    .container {
+      background-color: #fff;
+      border: 4px solid var(--terracota);
+      border-radius: 16px;
+      max-width: 900px;
+      width: 100%;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      animation: fadeInContainer 1s ease-in-out;
+    }
+    @keyframes fadeInContainer {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    h1, h2, h3, h4 {
+      text-align: center;
+      color: var(--terracota);
+      margin-top: 0;
+    }
+    /* Pantalla de bienvenida */
+    #welcome-screen {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #welcome-screen input {
+      padding: 10px;
+      margin: 5px;
+      font-size: 16px;
+      border: 2px solid var(--chocolate);
+      border-radius: 8px;
+      background-color: var(--greige);
+      width: 80%;
+      max-width: 300px;
+    }
+    #welcome-screen button {
+      background-color: var(--chocolate);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      margin-top: 10px;
+    }
+    #welcome-screen button:hover {
+      background-color: var(--btn-hover);
+      transform: scale(1.05);
+    }
+    .question-container {
+      margin: 20px 0;
+      background-color: var(--rosado-claro);
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--terracota);
+      animation: slideIn 0.8s ease-out;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    /* Barra de progreso */
+    #progress-bar-container {
+      width: 100%;
+      background-color: #eee;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    #progress-bar {
+      height: 20px;
+      width: 0%;
+      background-color: var(--terracota);
+      border-radius: 8px;
+      transition: width 0.3s;
+    }
+    .answers {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .answers button {
+      background-color: var(--chocolate);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      min-width: 160px;
+      text-align: center;
+    }
+    .answers button:hover {
+      background-color: var(--btn-hover);
+      transform: scale(1.05);
+    }
+    .answers button.selected {
+      background-color: var(--selected);
+    }
+    #controls {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .btn {
+      background-color: var(--chocolate);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 10px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .btn:hover {
+      background-color: var(--btn-hover);
+      transform: scale(1.05);
+    }
+    /* Contenedor de resultados con degradado más claro */
+    .profile-result {
+      margin-top: 30px;
+      padding: 25px;
+      border: 3px solid var(--terracota);
+      border-radius: 8px;
+      background: linear-gradient(to right, #FCEDE9, #F7F7F7);
+      animation: fadeInResult 1.2s ease-in-out;
+    }
+    @keyframes fadeInResult {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Solo el título del perfil se subraya */
+    #profile h3 {
+      text-decoration: underline;
+    }
+    /* Contenedor para el puntaje (porcentaje) centrado */
+    .puntaje-wrapper {
+      display: block;
+      text-align: center;
+      margin: 20px auto;
+    }
+    .porcentaje {
+      font-size: 48px;
+      font-weight: bold;
+      line-height: 1;
+      color: var(--terracota);
+    }
+    .puntaje-text {
+      font-size: 16px;
+      color: var(--chocolate);
+    }
+    /* Contenedor para los botones de resultados */
+    #result-buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Pantalla de bienvenida -->
+  <div class="container" id="welcome-screen">
+    <h1>Bienvenido a Descubre tu Ikigai</h1>
+    <p>Ingresa tu nombre para comenzar</p>
+    <input type="text" id="nombre" placeholder="Nombre" />
+    <br/>
+    <button class="btn" onclick="startQuiz()">Comenzar</button>
+  </div>
+  
+  <!-- Contenedor principal (inicialmente oculto) -->
+  <div class="container" id="main-container" style="display: none;">
+    <h1>Descubre tu Ikigai</h1>
+    <div id="quiz">
+      <div id="question-container" class="question-container"></div>
+      <!-- Barra de progreso -->
+      <div id="progress-bar-container">
+        <div id="progress-bar"></div>
+      </div>
+      <div id="controls">
+        <button id="next-btn" class="btn" onclick="handleNextQuestion()">Siguiente</button>
+      </div>
+    </div>
+    <div id="result-container" class="profile-result" style="display: none;">
+      <h2 id="result-message"></h2>
+      <div id="profile"></div>
+      <div class="puntaje-wrapper">
+        <div id="porcentaje" class="porcentaje"></div>
+        <div id="puntaje-text" class="puntaje-text">tendencia</div>
+      </div>
+      <div id="result-buttons">
+        <button class="btn" onclick="restartQuiz()">Reiniciar</button>
+        <button class="btn" onclick="savePDF()">Guardar/Imprimir PDF</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Variable global para el nombre
+    let userNombre = "";
+    
+    // Arreglo de 50 preguntas (lenguaje coloquial)
+    const questions = [
+      { question: "1. ¿Qué te gusta hacer en tus ratos libres?", answers: ["Leer libros de aventuras", "Practicar deporte intensamente", "Cocinar algo rico y saludable", "Salir de viaje y explorar"] },
+      { question: "2. ¿Qué haces cuando tienes un descanso?", answers: ["Platicar con amigos", "Disfrutar de tu soledad", "Estar con la familia", "Juntarte con amigos"] },
+      { question: "3. ¿Qué tipo de películas prefieres?", answers: ["Acción sin parar", "Comedias para reír a carcajadas", "Dramas que te hacen sentir todo", "Ciencia ficción que te sorprende"] },
+      { question: "4. ¿Qué música te motiva?", answers: ["Rock con mucha energía", "Pop que invita a bailar", "Música clásica para relajarte", "Electrónica moderna"] },
+      { question: "5. ¿Qué te impulsa a perseguir tus sueños?", answers: ["Triunfar en el trabajo", "Ser feliz de verdad", "Tener estabilidad económica", "Sentir paz en el alma"] },
+      { question: "6. Si tuvieras que describirte en una palabra, ¿cuál sería?", answers: ["Creativo y original", "Práctico y directo", "Compasivo y cercano", "Líder con visión"] },
+      { question: "7. ¿Qué tipo de libros prefieres?", answers: ["Novelas con tramas sorprendentes", "Biografías de personas destacadas", "Libros que te motivan", "Ciencia ficción que estimula la mente"] },
+      { question: "8. ¿Qué valoras en una verdadera amistad?", answers: ["Que estén contigo en las malas", "Pasarla bien siempre", "Apoyo incondicional", "Sinceridad total"] },
+      { question: "9. ¿Qué es lo que más te gusta de tu trabajo?", answers: ["Un ambiente creativo en equipo", "La estabilidad y la rutina", "Proyectos que marcan la diferencia", "Oportunidades para crecer"] },
+      { question: "10. ¿Cuál es tu mayor fortaleza en el trabajo?", answers: ["Ideas frescas y estratégicas", "Ser muy organizado", "Tener empatía", "Resolver problemas al instante"] },
+      { question: "11. ¿Cómo te relajas cuando sientes estrés?", answers: ["Hacer ejercicio", "Meditar y desconectar", "Platicar con amigos", "Enfrentar el problema directamente"] },
+      { question: "12. ¿Qué tipo de vacaciones te impresionan?", answers: ["Playas de ensueño", "Montañas y tranquilidad", "Ciudades históricas", "Aventuras en plena naturaleza"] },
+      { question: "13. ¿Qué es lo que más te inspira en la vida?", answers: ["La belleza de la naturaleza", "El arte en todas sus formas", "Tecnología que transforma", "Historias de personas increíbles"] },
+      { question: "14. ¿Qué prefieres hacer en un día sin compromisos?", answers: ["Leer algo inspirador", "Salir a caminar con amigos", "Cocinar algo delicioso", "Ver una buena película"] },
+      { question: "15. ¿Cuál es tu mayor temor al crecer?", answers: ["Temer fracasar", "Ser rechazado", "Sentirte solo", "No cumplir tus sueños"] },
+      { question: "16. ¿Cómo prefieres aprender algo nuevo?", answers: ["Leyendo con interés", "Poniéndote manos a la obra", "Escuchando charlas motivadoras", "Experimentando y observando"] },
+      { question: "17. ¿Qué actividad disfrutas hacer en grupo?", answers: ["Debatir ideas con entusiasmo", "Trabajar en equipo", "Ayudar a los demás", "Organizar eventos divertidos"] },
+      { question: "18. ¿Cómo te gustaría ser recordado?", answers: ["Como alguien que rompió esquemas", "Como un gran amigo", "Como un líder inspirador", "Como una persona muy compasiva"] },
+      { question: "19. ¿Qué deporte te interesa actualmente?", answers: ["Deporte individual para retarte", "Actividades en equipo para divertirte", "Deportes extremos y aventureros", "Prefiero no practicar deporte"] },
+      { question: "20. ¿Qué experiencia te hace sentir realizado en tu trabajo?", answers: ["Lanzar proyectos innovadores", "Alcanzar metas importantes", "Ayudar a los demás", "Resolver desafíos difíciles"] },
+      { question: "21. ¿Cuál es tu mayor aspiración personal?", answers: ["Ser reconocido en tu área", "Tener paz interior", "Contribuir a un cambio social", "Triunfar de forma sostenida"] },
+      { question: "22. ¿Qué programas de televisión prefieres?", answers: ["Documentales profundos", "Series de ficción emocionantes", "Reality shows divertidos", "Noticieros serios"] },
+      { question: "23. ¿Cuál es tu principal meta en este momento?", answers: ["Buscar la felicidad real", "Triunfar profesionalmente", "Hacer la diferencia en la sociedad", "Equilibrar tu vida"] },
+      { question: "24. ¿Cómo prefieres trabajar diariamente?", answers: ["En equipo y colaborando", "Trabajar solo a tu ritmo", "Con supervisión directa", "Con total autonomía"] },
+      { question: "25. ¿Qué valoras más en tu vida diaria?", answers: ["El tiempo con la familia", "Dar lo mejor en el trabajo", "Cultivar amistades sinceras", "Cuidar tu salud"] },
+      { question: "26. ¿Qué manifestación artística te impresiona más?", answers: ["Pinturas únicas", "Esculturas llenas de emoción", "Música que llega al corazón", "Cine con historias innovadoras"] },
+      { question: "27. ¿Qué te hace sentir vivo cada día?", answers: ["Vivir una aventura épica", "Celebrar tus logros", "Disfrutar de momentos de calma", "Conectar con las personas"] },
+      { question: "28. ¿Qué comida prefieres compartir con tus amigos?", answers: ["Comida italiana de calidad", "El sazón de la comida mexicana", "Platos con toques de comida japonesa", "Opciones saludables y vegetarianas"] },
+      { question: "29. ¿Qué sueles hacer los fines de semana?", answers: ["Salir con amigos", "Descansar por completo", "Practicar deporte al aire libre", "Visitar lugares culturales"] },
+      { question: "30. ¿Qué clima prefieres para tus vacaciones?", answers: ["Clima cálido y soleado", "Un ambiente fresco y agradable", "Temperaturas moderadas", "Días lluviosos que inspiren"] },
+      { question: "31. ¿Qué te hace sentir seguro en el día a día?", answers: ["Aprender algo nuevo", "Contar con el apoyo de familia y amigos", "Planificar cada paso", "Confiar en tu instinto"] },
+      { question: "32. ¿Qué cualidad buscas en tu pareja ideal?", answers: ["Confianza y sinceridad", "Pasión genuina", "Apoyo constante", "Amistad y comprensión"] },
+      { question: "33. ¿Qué te gustaría hacer en una tarde lluviosa?", answers: ["Leer un buen libro", "Ver una película emocionante", "Cocinar algo delicioso", "Relajarte en silencio"] },
+      { question: "34. ¿Qué estilo de ropa prefieres?", answers: ["Ropa casual y moderna", "Ropa deportiva para estar activo", "Un look elegante pero relajado", "Ropa cómoda y práctica"] },
+      { question: "35. ¿Qué consideras esencial en una relación saludable?", answers: ["Hablar con franqueza", "Confianza y respeto", "Amor verdadero", "Mutuo entendimiento"] },
+      { question: "36. ¿Qué te gustaría hacer en unas vacaciones de ensueño?", answers: ["Descansar en un paraíso", "Explorar ciudades y culturas", "Aprender algo nuevo", "Conocer gente y sus historias"] },
+      { question: "37. ¿Qué te motiva a levantarte con energía cada mañana?", answers: ["Perseguir tus sueños", "Pensar en tu familia", "Cumplir tus responsabilidades", "Seguir tus pasiones"] },
+      { question: "38. ¿Qué género literario prefieres?", answers: ["Novelas con tramas sorprendentes", "Libros de no ficción", "Ciencia ficción estimulante", "Fantasía para soñar"] },
+      { question: "39. ¿Qué te gusta hacer con amigos en tu tiempo libre?", answers: ["Leer y compartir ideas", "Hacer ejercicio juntos", "Ver series o películas", "Disfrutar de buenos momentos"] },
+      { question: "40. ¿Qué es lo más importante para ti tanto en lo personal como en lo profesional?", answers: ["Priorizar a la familia", "Tener éxito en lo que haces", "Buscar la verdadera felicidad", "Mantener la paz interior"] },
+      { question: "41. ¿Qué disfrutas hacer en una tarde de descanso?", answers: ["Leer algo inspirador", "Salir a caminar con buena vibra", "Ver una película cautivadora", "Cocinar algo nuevo y sabroso"] },
+      { question: "42. ¿Qué acción te hace sentir realizado?", answers: ["Alcanzar metas importantes", "Compartir momentos con tus seres queridos", "Ayudar a los demás", "Disfrutar de tus hobbies"] },
+      { question: "43. ¿Qué es lo que realmente valoras en la vida?", answers: ["El amor familiar", "El éxito logrado con esfuerzo", "La felicidad que ilumina tu camino", "La paz interior que te define"] },
+      { question: "44. ¿Qué actividad te anima y te hace sentir bien?", answers: ["Leer libros que te inspiren", "Ponerte en forma", "Ver programas que entretengan", "Pasar tiempo con buenos amigos"] },
+      { question: "45. ¿Qué te hace sentir que lograste algo importante hoy?", answers: ["Cumplir tus metas en el trabajo", "Ayudar a alguien que lo necesita", "Crear algo original", "Resolver un desafío complicado"] },
+      { question: "46. ¿Qué prefieres hacer en una tarde lluviosa en casa?", answers: ["Leer algo motivador", "Ver una buena película", "Cocinar algo reconfortante", "Descansar y relajarte"] },
+      { question: "47. ¿Qué clima te permite disfrutar más de la naturaleza?", answers: ["Clima cálido con brisa suave", "Un ambiente fresco y agradable", "Temperaturas moderadas", "Días lluviosos que inspiran"] },
+      { question: "48. ¿Qué consideras vital para que una relación funcione?", answers: ["Ser honesto y abierto", "Construir confianza cada día", "Amor sincero y profundo", "Respetarse mutuamente"] },
+      { question: "49. ¿Qué te gusta hacer cuando dispones de un día libre completo?", answers: ["Leer, charlar y aprender", "Hacer deporte al aire libre", "Ver una película inspiradora", "Pasar tiempo con amigos"] },
+      { question: "50. ¿Qué actividad te recarga y te llena de energía cada mañana?", answers: ["Lograr algo importante", "Disfrutar momentos con la familia", "Empezar nuevos proyectos", "Vivir aventuras con determinación"] }
+    ];
+    
+    // Arreglo de perfiles (sin encabezado en la descripción; el título se añadirá en showResult)
+    const profiles = [
+      { 
+        name: "Visionario", 
+        description: `
+<p><strong>Características:</strong> Eres de los que siempre miran más allá, con una mente llena de ideas frescas y originales. Tienes el don de encontrar soluciones donde otros solo ven problemas. <em>Te emociona imaginar un futuro distinto y cada reto te inspira a soñar en grande.</em></p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes trabajar como emprendedor, consultor estratégico o director de innovación. <br><strong>Como freelancer:</strong> Ofrece consultoría en innovación, creación de contenido sobre tendencias tecnológicas o asesoría en transformación digital.</p>
+<p><strong>Misión en la vida:</strong> Tu objetivo es abrir nuevos caminos y romper moldes. Crees que la innovación es clave para resolver los problemas del presente y construir un futuro mejor. <em>Sentir que tus ideas transforman vidas te llena de energía.</em></p>
+<p><strong>Aporte a la sociedad:</strong> Inspiras a otros a pensar diferente y a salir de la rutina. Con tu visión, ayudas a impulsar cambios y mejoras en la comunidad. <em>Ver tus iniciativas beneficiar a otros te hace sentir orgulloso.</em></p>
+<p><strong>Lo que te llena espiritualmente:</strong> Te llena el alma ver que tus ideas se convierten en realidades que impactan positivamente. <em>Esa conexión profunda con tus sueños te hace sentir pleno y en paz.</em></p>
+        `
+      },
+      { 
+        name: "Realista", 
+        description: `
+<p><strong>Características:</strong> Eres práctico y tienes una visión clara de la realidad. Siempre ves las cosas como son, lo que te permite tomar decisiones con precisión. <em>Tu objetividad te hace muy confiable.</em></p>
+<p><strong>Trabajos que puedes ejercer:</strong> Roles como gerente de operaciones, analista financiero o consultor de procesos son ideales para ti. <br><strong>Como freelancer:</strong> Ofrece servicios de gestión de proyectos, análisis financiero independiente o consultoría en optimización de procesos.</p>
+<p><strong>Misión en la vida:</strong> Buscas aportar estabilidad y sentido en cada proyecto. Crees que el éxito se construye con trabajo constante y atención a los detalles. <em>Sentir que cada paso tuyo crea una base sólida te motiva a seguir.</em></p>
+<p><strong>Aporte a la sociedad:</strong> Ayudas a transformar ideas en realidades confiables, generando un impacto positivo en tu entorno. <em>Ver tu esfuerzo traducirse en resultados concretos te llena de orgullo.</em></p>
+<p><strong>Lo que te llena espiritualmente:</strong> Encuentras paz en la coherencia y en saber que cada acción tiene un propósito. <em>La tranquilidad de ver todo en orden te conecta contigo mismo.</em></p>
+        `
+      },
+      { 
+        name: "Idealista", 
+        description: `
+<p><strong>Características:</strong> Te mueve la pasión por la justicia y el bienestar de los demás. Eres sensible y comprometido, siempre buscando un mundo más equitativo. <em>La idea de que cada persona merece ser escuchada te conmueve y te impulsa a actuar.</em></p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes liderar movimientos sociales, trabajar como educador o participar en proyectos comunitarios. <br><strong>Como freelancer:</strong> Ofrece consultoría en impacto social, desarrollo de cursos en línea o asesoría para ONGs.</p>
+<p><strong>Misión en la vida:</strong> Tu misión es ser un faro de esperanza y motor de cambio positivo. Crees que la empatía y la solidaridad son esenciales para transformar la sociedad. <em>Sentir que tus esfuerzos construyen un futuro más justo te llena de entusiasmo.</em></p>
+<p><strong>Aporte a la sociedad:</strong> Motivas a otros a luchar por un mundo mejor, promoviendo la unión y el respeto. <em>Ver comunidades fortalecidas por tu aporte te inspira a seguir adelante.</em></p>
+<p><strong>Lo que te llena espiritualmente:</strong> Te llena el corazón ver que, a través de tus acciones, siembras esperanza y amor. <em>Esa conexión emocional te hace sentir verdaderamente vivo.</em></p>
+        `
+      },
+      { 
+        name: "Innovador", 
+        description: `
+<p><strong>Características:</strong> Tu mente siempre está en movimiento, llena de ideas y soluciones fuera de lo común. No temes romper esquemas y te encanta experimentar. <em>Te emociona descubrir nuevas formas de ver el mundo.</em></p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte como diseñador de productos, investigador en tecnología o consultor en transformación digital. <br><strong>Como freelancer:</strong> Ofrece desarrollo de prototipos, diseño de productos digitales o asesoría en marketing de innovación.</p>
+<p><strong>Misión en la vida:</strong> Tu propósito es desafiar lo establecido y abrir nuevos caminos. Crees que cada innovación puede marcar una gran diferencia. <em>Sentir que tus ideas transforman industrias te impulsa a seguir explorando.</em></p>
+<p><strong>Aporte a la sociedad:</strong> Inspiras a otros a pensar de manera disruptiva y a buscar soluciones creativas. Tu visión genera cambios que benefician a la comunidad. <em>Ver el impacto positivo de tus iniciativas te hace sentir realizado.</em></p>
+<p><strong>Lo que te llena espiritualmente:</strong> Te llena el alma ver que tus ideas se hacen realidad y mejoran la vida de las personas. <em>Esa conexión con tu creatividad te brinda una paz inmensa.</em></p>
+        `
+      },
+      { 
+        name: "Empático", 
+        description: `
+<p><strong>Características:</strong> Tienes una sensibilidad especial para entender a los demás. Siempre estás atento a los sentimientos de quienes te rodean y sabes escuchar de verdad. <em>Tu capacidad para conectar con las emociones es un rasgo que te define.</em></p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes trabajar como psicólogo, trabajador social o coach de vida. <br><strong>Como freelancer:</strong> Ofrece asesorías en bienestar emocional, coaching personal o redacción de contenido sobre desarrollo personal.</p>
+<p><strong>Misión en la vida:</strong> Tu misión es tender puentes y crear ambientes de armonía. Crees que el diálogo y la comprensión son fundamentales para las relaciones. <em>Sentir que puedes aliviar el dolor de otros te impulsa a dar lo mejor de ti.</em></p>
+<p><strong>Aporte a la sociedad:</strong> Con tu capacidad para escuchar y apoyar, ayudas a formar comunidades más unidas y comprensivas. <em>El agradecimiento que recibes te confirma que estás en el camino correcto.</em></p>
+<p><strong>Lo que te llena espiritualmente:</strong> Te llena el corazón ver que tu apoyo contribuye a la paz y la felicidad de los demás. <em>Esa conexión emocional te hace sentir en sintonía con el mundo.</em></p>
+        `
+      },
+      { 
+        name: "Líder", 
+        description: `
+<p><strong>Características:</strong> Eres carismático y decidido, siempre listo para tomar la iniciativa y unir a las personas. Tienes la habilidad de inspirar a otros y sacar lo mejor de cada uno. <em>Te motiva ver a tu equipo avanzar y alcanzar metas juntos.</em></p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte como gerente, director o coordinador de proyectos, o incluso liderar tu propio emprendimiento. <br><strong>Como freelancer:</strong> Ofrece servicios de coordinación de equipos, gestión de proyectos o coaching ejecutivo.</p>
+<p><strong>Misión en la vida:</strong> Tu misión es empoderar a los demás y guiarlos hacia su máximo potencial. Crees en el poder del trabajo en equipo. <em>Sentir que contribuyes al éxito colectivo te llena de orgullo.</em></p>
+<p><strong>Aporte a la sociedad:</strong> Creas ambientes de colaboración y motivación que impulsan el cambio y el progreso. <em>Ver cómo tus esfuerzos unen a la gente te confirma que realmente marcas la diferencia.</em></p>
+<p><strong>Lo que te llena espiritualmente:</strong> Te llena el alma ver que tu liderazgo transforma vidas y construye un futuro prometedor. <em>Esa conexión con el éxito de otros te brinda un profundo sentido de realización.</em></p>
+        `
+      },
+      { 
+        name: "Analítico", 
+        description: `
+<p><strong>Características:</strong> Eres meticuloso y detallista, con una mente que descompone los problemas en partes manejables. Te gusta investigar y encontrar la lógica en cada situación. <em>Te emociona descubrir patrones y resolver desafíos con precisión.</em></p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte como científico de datos, analista de mercado o consultor en investigación. <br><strong>Como freelancer:</strong> Ofrece análisis de datos, consultoría en inteligencia de negocios o elaboración de informes especializados.</p>
+<p><strong>Misión en la vida:</strong> Buscas la verdad y la claridad en todo lo que haces. Crees que el conocimiento bien aplicado puede transformar realidades. <em>Sentir que tus análisis ayudan a tomar mejores decisiones te llena de propósito.</em></p>
+<p><strong>Aporte a la sociedad:</strong> Con tu capacidad para analizar, conviertes la incertidumbre en certeza y ayudas a que se tomen decisiones informadas. <em>Ver cómo tu trabajo mejora procesos te inspira a seguir adelante.</em></p>
+<p><strong>Lo que te llena espiritualmente:</strong> Te llena el alma ver que el poder del conocimiento se traduce en un impacto positivo. <em>Esa conexión con el saber te hace sentir realizado y en paz.</em></p>
+        `
+      },
+      { 
+        name: "Creativo", 
+        description: `
+<p><strong>Características:</strong> Ves la belleza en lo cotidiano y transformas lo ordinario en algo extraordinario. Tu imaginación es tu mejor herramienta y siempre encuentras formas originales de expresarte. <em>Te emociona crear y ver el mundo con un toque artístico.</em></p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes desarrollarte como diseñador gráfico, artista, director creativo o publicista. <br><strong>Como freelancer:</strong> Ofrece servicios de diseño gráfico, producción audiovisual, redacción creativa o publicidad digital.</p>
+<p><strong>Misión en la vida:</strong> Tu misión es inspirar y transformar la realidad a través del arte y la creatividad. Crees que cada obra puede cambiar la manera de ver el mundo. <em>Sentir que tus creaciones impactan positivamente en la vida de otros te llena de inspiración.</em></p>
+<p><strong>Aporte a la sociedad:</strong> Con tu arte, abres nuevas perspectivas y motivas a las personas a apreciar la belleza en cada detalle. <em>La emoción de ver cómo tus obras generan sentimientos te hace vibrar.</em></p>
+<p><strong>Lo que te llena espiritualmente:</strong> Te llena el alma ver que cada trazo y cada idea se convierten en obras que inspiran y transforman. <em>Esa conexión íntima con tu creatividad te hace sentir pleno.</em></p>
+        `
+      },
+      { 
+        name: "Aventurero", 
+        description: `
+<p><strong>Características:</strong> Vives cada día como una gran aventura. Te encanta explorar, descubrir y romper la rutina. Tu espíritu libre y curioso te impulsa a buscar siempre lo nuevo. <em>La emoción de vivir experiencias únicas te llena de vitalidad.</em></p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte en roles relacionados con el turismo, la coordinación de eventos de aventura o actividades al aire libre. <br><strong>Como freelancer:</strong> Ofrece servicios como guía turístico independiente, organización de eventos de aventura o fotografía de viajes.</p>
+<p><strong>Misión en la vida:</strong> Tu misión es descubrir lo desconocido y compartir esas experiencias. Crees que salir de la zona de confort es clave para crecer como persona. <em>Sentir que cada aventura te enseña algo nuevo te impulsa a seguir explorando.</em></p>
+<p><strong>Aporte a la sociedad:</strong> Inspiras a otros a vivir intensamente y a atreverse a romper sus propios límites. <em>Ver cómo animas a la gente a descubrir el mundo te llena de satisfacción.</em></p>
+<p><strong>Lo que te llena espiritualmente:</strong> Te llena el alma la conexión con la naturaleza y la sensación de libertad al explorar. <em>Esa sensación de vivir plenamente te hace sentir en paz contigo mismo.</em></p>
+        `
+      },
+      { 
+        name: "Pacificador", 
+        description: `
+<p><strong>Características:</strong> Tienes un don especial para generar armonía donde hay conflicto. Eres calmado y empático, y sabes mediar entre puntos de vista distintos. <em>Tu forma de ser transmite tranquilidad y comprensión.</em></p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte como diplomático, mediador o consultor en relaciones laborales. <br><strong>Como freelancer:</strong> Ofrece servicios de mediación independiente, consultoría en resolución de conflictos o asesoría en recursos humanos.</p>
+<p><strong>Misión en la vida:</strong> Tu misión es tender puentes y promover el entendimiento entre las personas. Crees que el diálogo y la empatía son fundamentales para resolver conflictos. <em>Sentir que transformas tensiones en consensos te motiva a ayudar a los demás.</em></p>
+<p><strong>Aporte a la sociedad:</strong> Con tu capacidad para mediar, creas ambientes colaborativos y respetuosos que benefician a la comunidad. <em>Ver cómo se restauran relaciones gracias a tu intervención te llena de satisfacción.</em></p>
+<p><strong>Lo que te llena espiritualmente:</strong> Te llena el corazón ver que tus acciones contribuyen a la paz y la unidad. <em>Esa conexión con el bienestar de otros te hace sentir profundamente realizado.</em></p>
+        `
+      },
+      { 
+        name: "Educador", 
+        description: `
+<p><strong>Características:</strong> Tienes una gran pasión por compartir conocimientos y ver crecer a los demás. Eres paciente, claro y siempre dispuesto a explicar las cosas de forma sencilla. <em>Te conmueve la idea de que cada persona pueda aprender y mejorar.</em></p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes trabajar como profesor, tutor, mentor o conferencista en talleres y seminarios. <br><strong>Como freelancer:</strong> Ofrece cursos en línea, tutorías virtuales o creación de contenido educativo.</p>
+<p><strong>Misión en la vida:</strong> Tu misión es iluminar el camino del aprendizaje y fomentar el pensamiento crítico. Crees que la educación es la clave para un futuro mejor. <em>Sentir que contribuyes al desarrollo de otros te impulsa a seguir educando.</em></p>
+<p><strong>Aporte a la sociedad:</strong> Con tu enseñanza, dejas un legado de conocimientos y valores que perduran en el tiempo. Ayudas a romper barreras y a construir una sociedad más informada. <em>Ver cómo tus alumnos crecen te llena de orgullo.</em></p>
+<p><strong>Lo que te llena espiritualmente:</strong> Te llena el alma ver que, a través de la educación, puedes transformar vidas y abrir nuevos horizontes. <em>Esa conexión con el saber te hace sentir profundamente realizado.</em></p>
+        `
+      }
+    ];
+    
+    // Variables de control
+    const totalQuestions = questions.length;
+    let currentQuestion = 0;
+    let selectedAnswer = null;
+    let profileCounts = {};
+    let rawScores = {};
+    let firstThree = {};
+    
+    // Inicializamos los contadores para cada perfil
+    profiles.forEach(p => {
+      profileCounts[p.name] = 0;
+      rawScores[p.name] = 0;
+    });
+    
+    // Función para iniciar el quiz tras la bienvenida
+    function startQuiz() {
+      const nombreInput = document.getElementById("nombre").value.trim();
+      if(nombreInput === "") {
+        alert("Por favor, ingresa tu nombre.");
+        return;
+      }
+      userNombre = nombreInput;
+      document.getElementById("welcome-screen").style.display = "none";
+      document.getElementById("main-container").style.display = "block";
+      displayQuestion();
+      updateProgressBar();
+    }
+    
+    function displayQuestion() {
+      selectedAnswer = null;
+      const container = document.getElementById("question-container");
+      container.innerHTML = "";
+      const current = questions[currentQuestion];
+      
+      const questionText = document.createElement("h3");
+      questionText.innerHTML = current.question;
+      container.appendChild(questionText);
+      
+      const answersDiv = document.createElement("div");
+      answersDiv.className = "answers";
+      current.answers.forEach((ans, index) => {
+        const btn = document.createElement("button");
+        btn.textContent = ans;
+        btn.onclick = () => selectAnswer(btn, index);
+        answersDiv.appendChild(btn);
+      });
+      container.appendChild(answersDiv);
+      
+      updateProgressBar();
+    }
+    
+    function updateProgressBar() {
+      const progressBar = document.getElementById("progress-bar");
+      const percent = (currentQuestion / totalQuestions) * 100;
+      progressBar.style.width = percent + "%";
+    }
+    
+    function selectAnswer(button, index) {
+      const buttons = document.querySelectorAll(".answers button");
+      buttons.forEach(btn => btn.classList.remove("selected"));
+      button.classList.add("selected");
+      selectedAnswer = index;
+    }
+    
+    function handleNextQuestion() {
+      if (selectedAnswer === null) {
+        alert("Por favor, selecciona una respuesta antes de continuar.");
+        return;
+      }
+      const profileIndex = (currentQuestion + selectedAnswer) % profiles.length;
+      const profileName = profiles[profileIndex].name;
+      
+      profileCounts[profileName]++;
+      rawScores[profileName] = 3 * profileCounts[profileName];
+      
+      if (profileCounts[profileName] === 3 && firstThree[profileName] === undefined) {
+        firstThree[profileName] = currentQuestion;
+      }
+      
+      currentQuestion++;
+      if (currentQuestion < totalQuestions) {
+        displayQuestion();
+      } else {
+        showResult();
+      }
+    }
+    
+    function showResult() {
+      document.getElementById("quiz").style.display = "none";
+      document.getElementById("result-container").style.display = "block";
+      
+      let winnerName = "";
+      let maxRaw = -1;
+      for (let name in rawScores) {
+        if (rawScores[name] > maxRaw) {
+          maxRaw = rawScores[name];
+          winnerName = name;
+        } else if (rawScores[name] === maxRaw) {
+          if (firstThree[name] < firstThree[winnerName]) {
+            winnerName = name;
+          }
+        }
+      }
+      
+      let winnerResponses = profileCounts[winnerName];
+      let winnerRaw = 3 * winnerResponses;
+      let respuestasNoEnfocadas = totalQuestions - winnerResponses;
+      let pointsToSubtract = 0.02 * respuestasNoEnfocadas;
+      let winnerEffective = winnerRaw - pointsToSubtract;
+      
+      let percentage = (winnerEffective / winnerRaw) * 100;
+      percentage = Math.round(percentage * 10) / 10;
+      
+      const resultMessage = document.getElementById("result-message");
+      resultMessage.innerHTML = `¡Excelente ${userNombre}! Este es tu perfil:`;
+      
+      const bestProfile = profiles.find(p => p.name === winnerName);
+      const profileDiv = document.getElementById("profile");
+      // Se añade solo un encabezado, sin repetirlo en la descripción
+      profileDiv.innerHTML = `<h3><u>${bestProfile.name}</u></h3>` + bestProfile.description;
+      
+      const porcentajeDiv = document.getElementById("porcentaje");
+      porcentajeDiv.textContent = `${percentage}%`;
+    }
+    
+    function restartQuiz() {
+      currentQuestion = 0;
+      selectedAnswer = null;
+      profiles.forEach(p => {
+        profileCounts[p.name] = 0;
+        rawScores[p.name] = 0;
+      });
+      firstThree = {};
+      document.getElementById("result-container").style.display = "none";
+      document.getElementById("quiz").style.display = "block";
+      displayQuestion();
+    }
+    
+    // Función para guardar/Imprimir PDF sin los botones
+    function savePDF() {
+      const btnContainer = document.getElementById("result-buttons");
+      // Ocultamos los botones
+      btnContainer.style.display = "none";
+      
+      // Usamos html2canvas para capturar el contenedor de resultados
+      setTimeout(function() {
+        html2canvas(document.getElementById("result-container"), { useCORS: true, scrollY: -window.scrollY }).then(canvas => {
+          // Restauramos los botones
+          btnContainer.style.display = "block";
+          const imgData = canvas.toDataURL("image/jpeg", 1.0);
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+          pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+          pdf.save("ikigai_result.pdf");
+        });
+      }, 1000);
+    }
+    
+    // La función startQuiz() se invoca desde el botón de la pantalla de bienvenida.
+  </script>
+</body>
+</html>
