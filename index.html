@@ -10,28 +10,85 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      /* Tonos pasteles con alto contraste */
-      --terracota: #D35400;      /* Terracota fuerte */
-      --chocolate: #5D4037;       /* Chocolate oscuro */
-      --greige: #BDC3C7;         /* Grisáceo */
-      --rosado-claro: #F1948A;     /* Rosado claro */
-      --selected: #A0522D;        /* Sienna oscura */
-      --btn-hover: #8B4513;       /* Marrón para hover */
+      /* Nueva paleta basada en la tarjeta horizontal */
+      --terracota: #3E2723;        /* Marrón oscuro principal */
+      --chocolate: #DDC08C;        /* Marrón más oscuro */
+      --greige: #EFDBB9;           /* Marrón medio */
+      --rosado-claro: #B26E40;     /* Marrón claro */
+      --selected: #B26E40;         /* Marrón selección */
+      --btn-hover: #755D3C;        /* Hover más claro */
     }
+
     body {
       font-family: 'Poppins', sans-serif;
       margin: 0;
       padding: 20px;
       background: linear-gradient(135deg, var(--greige), var(--rosado-claro));
-      color: var(--chocolate);
+      color: #3E2723;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
     }
+
+ /* Centrado de botones en pantalla */
+    #result-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    /* Justificado y espaciado para perfiles */
+    .profile-result {
+      line-height: 1.5;
+      text-align: justify;
+    }
+
+    .profile-result p {
+      margin: 12px 0;
+    }
+
+    /* Ajustes específicos para impresión */
+    @media print {
+      @page {
+        size: letter;
+        margin: 2cm;
+      }
+
+      .container {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: white !important;
+        animation: none !important;
+      }
+
+      .profile-result {
+        break-before: avoid;
+        page-break-inside: avoid;
+        line-height: 1.5 !important;
+        font-size: 14pt;
+      }
+
+      .puntaje-wrapper {
+        page-break-inside: avoid;
+        margin: 20px 0 !important;
+      }
+
+      .porcentaje {
+        font-size: 48pt !important;
+      }
+
+      h2, h3 {
+        page-break-after: avoid;
+      }
+    }
+
     /* Contenedor general */
     .container {
-      background-color: #fff;
+      background-color: var(--chocolate);
       border: 4px solid var(--terracota);
       border-radius: 16px;
       max-width: 900px;
@@ -40,32 +97,43 @@
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
       animation: fadeInContainer 1s ease-in-out;
     }
+
     @keyframes fadeInContainer {
       from { opacity: 0; transform: scale(0.95); }
       to { opacity: 1; transform: scale(1); }
     }
+
     h1, h2, h3, h4 {
       text-align: center;
-      color: var(--terracota);
+      color: #3E2723;
       margin-top: 0;
     }
+
     /* Pantalla de bienvenida */
     #welcome-screen {
       text-align: center;
       margin-bottom: 20px;
     }
+
     #welcome-screen input {
       padding: 10px;
       margin: 5px;
       font-size: 16px;
-      border: 2px solid var(--chocolate);
+      border: 2px solid var(--terracota);
       border-radius: 8px;
       background-color: var(--greige);
       width: 80%;
       max-width: 300px;
+      color: ##3E2723;
     }
+
+    #welcome-screen input::placeholder {
+      color: #848484;
+      opacity: 0.8;
+    }
+
     #welcome-screen button {
-      background-color: var(--chocolate);
+      background-color: var(--terracota);
       color: #fff;
       border: none;
       border-radius: 8px;
@@ -75,36 +143,42 @@
       transition: background-color 0.3s, transform 0.2s;
       margin-top: 10px;
     }
+
     #welcome-screen button:hover {
       background-color: var(--btn-hover);
       transform: scale(1.05);
     }
+
     .question-container {
       margin: 20px 0;
-      background-color: var(--rosado-claro);
+      background-color: var(--greige);
       padding: 20px;
       border-radius: 8px;
       border: 1px solid var(--terracota);
       animation: slideIn 0.8s ease-out;
     }
+
     @keyframes slideIn {
       from { opacity: 0; transform: translateX(-50px); }
       to { opacity: 1; transform: translateX(0); }
     }
+
     /* Barra de progreso */
     #progress-bar-container {
       width: 100%;
-      background-color: #eee;
+      background-color: #DDC08C;
       border-radius: 8px;
       margin: 10px 0;
     }
+
     #progress-bar {
       height: 20px;
       width: 0%;
-      background-color: var(--terracota);
+      background-color: var(--rosado-claro);
       border-radius: 8px;
       transition: width 0.3s;
     }
+
     .answers {
       display: flex;
       flex-direction: column;
@@ -112,8 +186,9 @@
       gap: 10px;
       margin-top: 15px;
     }
+
     .answers button {
-      background-color: var(--chocolate);
+      background-color: var(--terracota);
       color: #fff;
       border: none;
       border-radius: 8px;
@@ -124,76 +199,86 @@
       min-width: 160px;
       text-align: center;
     }
+
     .answers button:hover {
       background-color: var(--btn-hover);
       transform: scale(1.05);
     }
+
     .answers button.selected {
       background-color: var(--selected);
     }
+
     #controls {
       text-align: center;
       margin-top: 20px;
     }
+
     .btn {
-      background-color: var(--chocolate);
+      background-color: var(--terracota);
       color: #fff;
       border: none;
       border-radius: 8px;
       padding: 12px 24px;
-      font-size: 16px;
+      font-size: 17px;
       cursor: pointer;
       margin: 10px;
       transition: background-color 0.3s, transform 0.2s;
     }
+
     .btn:hover {
       background-color: var(--btn-hover);
-      transform: scale(1.05);
+      transform: scale(1.025);
     }
-    /* Contenedor de resultados con degradado más claro */
+
+    /* Contenedor de resultados */
     .profile-result {
       margin-top: 30px;
       padding: 25px;
       border: 3px solid var(--terracota);
       border-radius: 8px;
-      background: linear-gradient(to right, #FCEDE9, #F7F7F7);
+      background: #efdbb9;
       animation: fadeInResult 1.2s ease-in-out;
+      color: #3E2723;
+
+.profile-result {
+  overflow: visible !important;
+  page-break-inside: avoid; /* Evita cortes en contenido */
+}
     }
+
     @keyframes fadeInResult {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    /* Solo el título del perfil se subraya */
-    #profile h3 {
-      text-decoration: underline;
-    }
-    /* Contenedor para el puntaje (porcentaje) centrado */
+
+    /* Puntaje */
     .puntaje-wrapper {
       display: block;
       text-align: center;
-      margin: 20px auto;
+      margin: 40px auto;
     }
+
     .porcentaje {
-      font-size: 48px;
+      font-size: 60px;
       font-weight: bold;
       line-height: 1;
-      color: var(--terracota);
+      color: #B26E40;
     }
+
     .puntaje-text {
       font-size: 16px;
-      color: var(--chocolate);
+      color: #3E2723;
     }
-    /* Contenedor para los botones de resultados */
-    #result-buttons {
-      text-align: center;
-      margin-top: 20px;
+
+    
     }
   </style>
 </head>
 <body>
   <!-- Pantalla de bienvenida -->
   <div class="container" id="welcome-screen">
-    <h1>Bienvenido a Descubre tu Ikigai</h1>
+    <h1>Bienvenido a Descubre tu potencial</h1>
     <p>Ingresa tu nombre para comenzar</p>
     <input type="text" id="nombre" placeholder="Nombre" />
     <br/>
@@ -202,7 +287,7 @@
   
   <!-- Contenedor principal (inicialmente oculto) -->
   <div class="container" id="main-container" style="display: none;">
-    <h1>Descubre tu Ikigai</h1>
+    <h1>Descubre tu potencial</h1>
     <div id="quiz">
       <div id="question-container" class="question-container"></div>
       <!-- Barra de progreso -->
@@ -214,18 +299,17 @@
       </div>
     </div>
     <div id="result-container" class="profile-result" style="display: none;">
-      <h2 id="result-message"></h2>
-      <div id="profile"></div>
-      <div class="puntaje-wrapper">
-        <div id="porcentaje" class="porcentaje"></div>
-        <div id="puntaje-text" class="puntaje-text">tendencia</div>
-      </div>
-      <div id="result-buttons">
-        <button class="btn" onclick="restartQuiz()">Reiniciar</button>
-        <button class="btn" onclick="savePDF()">Guardar/Imprimir PDF</button>
-      </div>
-    </div>
+  <h2 id="result-message"></h2>
+  <div id="profile" class="print-optimized"></div>
+  <div class="puntaje-wrapper">
+    <div id="porcentaje" class="porcentaje"></div>
+    <div id="puntaje-text" class="puntaje-text">tendencia</div>
   </div>
+  <div id="result-buttons">
+  <button class="btn" onclick="restartQuiz()">Reiniciar</button>
+  <button class="btn" onclick="guardarImagen()">Guardar como imagen</button>
+</div>
+</div>
   
   <script>
     // Variable global para el nombre
@@ -291,7 +375,8 @@
         name: "Visionario", 
         description: `
 <p><strong>Características:</strong> Eres de los que siempre miran más allá, con una mente llena de ideas frescas y originales. Tienes el don de encontrar soluciones donde otros solo ven problemas. <em>Te emociona imaginar un futuro distinto y cada reto te inspira a soñar en grande.</em></p>
-<p><strong>Trabajos que puedes ejercer:</strong> Puedes trabajar como emprendedor, consultor estratégico o director de innovación. <br><strong>Como freelancer:</strong> Ofrece consultoría en innovación, creación de contenido sobre tendencias tecnológicas o asesoría en transformación digital.</p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes trabajar como emprendedor, consultor estratégico o director de innovación. <br></p>
+<p><strong>Como freelancer:</strong> Ofrece consultoría en innovación, creación de contenido sobre tendencias tecnológicas o asesoría en transformación digital.</p>
 <p><strong>Misión en la vida:</strong> Tu objetivo es abrir nuevos caminos y romper moldes. Crees que la innovación es clave para resolver los problemas del presente y construir un futuro mejor. <em>Sentir que tus ideas transforman vidas te llena de energía.</em></p>
 <p><strong>Aporte a la sociedad:</strong> Inspiras a otros a pensar diferente y a salir de la rutina. Con tu visión, ayudas a impulsar cambios y mejoras en la comunidad. <em>Ver tus iniciativas beneficiar a otros te hace sentir orgulloso.</em></p>
 <p><strong>Lo que te llena espiritualmente:</strong> Te llena el alma ver que tus ideas se convierten en realidades que impactan positivamente. <em>Esa conexión profunda con tus sueños te hace sentir pleno y en paz.</em></p>
@@ -301,7 +386,8 @@
         name: "Realista", 
         description: `
 <p><strong>Características:</strong> Eres práctico y tienes una visión clara de la realidad. Siempre ves las cosas como son, lo que te permite tomar decisiones con precisión. <em>Tu objetividad te hace muy confiable.</em></p>
-<p><strong>Trabajos que puedes ejercer:</strong> Roles como gerente de operaciones, analista financiero o consultor de procesos son ideales para ti. <br><strong>Como freelancer:</strong> Ofrece servicios de gestión de proyectos, análisis financiero independiente o consultoría en optimización de procesos.</p>
+<p><strong>Trabajos que puedes ejercer:</strong> Roles como gerente de operaciones, analista financiero o consultor de procesos son ideales para ti. <br></p>
+<p><strong>Como freelancer:</strong> Ofrece servicios de gestión de proyectos, análisis financiero independiente o consultoría en optimización de procesos.</p>
 <p><strong>Misión en la vida:</strong> Buscas aportar estabilidad y sentido en cada proyecto. Crees que el éxito se construye con trabajo constante y atención a los detalles. <em>Sentir que cada paso tuyo crea una base sólida te motiva a seguir.</em></p>
 <p><strong>Aporte a la sociedad:</strong> Ayudas a transformar ideas en realidades confiables, generando un impacto positivo en tu entorno. <em>Ver tu esfuerzo traducirse en resultados concretos te llena de orgullo.</em></p>
 <p><strong>Lo que te llena espiritualmente:</strong> Encuentras paz en la coherencia y en saber que cada acción tiene un propósito. <em>La tranquilidad de ver todo en orden te conecta contigo mismo.</em></p>
@@ -311,7 +397,8 @@
         name: "Idealista", 
         description: `
 <p><strong>Características:</strong> Te mueve la pasión por la justicia y el bienestar de los demás. Eres sensible y comprometido, siempre buscando un mundo más equitativo. <em>La idea de que cada persona merece ser escuchada te conmueve y te impulsa a actuar.</em></p>
-<p><strong>Trabajos que puedes ejercer:</strong> Puedes liderar movimientos sociales, trabajar como educador o participar en proyectos comunitarios. <br><strong>Como freelancer:</strong> Ofrece consultoría en impacto social, desarrollo de cursos en línea o asesoría para ONGs.</p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes liderar movimientos sociales, trabajar como educador o participar en proyectos comunitarios. <br></p>
+<p><strong>Como freelancer:</strong> Ofrece consultoría en impacto social, desarrollo de cursos en línea o asesoría para ONGs.</p>
 <p><strong>Misión en la vida:</strong> Tu misión es ser un faro de esperanza y motor de cambio positivo. Crees que la empatía y la solidaridad son esenciales para transformar la sociedad. <em>Sentir que tus esfuerzos construyen un futuro más justo te llena de entusiasmo.</em></p>
 <p><strong>Aporte a la sociedad:</strong> Motivas a otros a luchar por un mundo mejor, promoviendo la unión y el respeto. <em>Ver comunidades fortalecidas por tu aporte te inspira a seguir adelante.</em></p>
 <p><strong>Lo que te llena espiritualmente:</strong> Te llena el corazón ver que, a través de tus acciones, siembras esperanza y amor. <em>Esa conexión emocional te hace sentir verdaderamente vivo.</em></p>
@@ -321,7 +408,8 @@
         name: "Innovador", 
         description: `
 <p><strong>Características:</strong> Tu mente siempre está en movimiento, llena de ideas y soluciones fuera de lo común. No temes romper esquemas y te encanta experimentar. <em>Te emociona descubrir nuevas formas de ver el mundo.</em></p>
-<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte como diseñador de productos, investigador en tecnología o consultor en transformación digital. <br><strong>Como freelancer:</strong> Ofrece desarrollo de prototipos, diseño de productos digitales o asesoría en marketing de innovación.</p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte como diseñador de productos, investigador en tecnología o consultor en transformación digital. <br></p>
+<p><strong>Como freelancer:</strong> Ofrece desarrollo de prototipos, diseño de productos digitales o asesoría en marketing de innovación.</p>
 <p><strong>Misión en la vida:</strong> Tu propósito es desafiar lo establecido y abrir nuevos caminos. Crees que cada innovación puede marcar una gran diferencia. <em>Sentir que tus ideas transforman industrias te impulsa a seguir explorando.</em></p>
 <p><strong>Aporte a la sociedad:</strong> Inspiras a otros a pensar de manera disruptiva y a buscar soluciones creativas. Tu visión genera cambios que benefician a la comunidad. <em>Ver el impacto positivo de tus iniciativas te hace sentir realizado.</em></p>
 <p><strong>Lo que te llena espiritualmente:</strong> Te llena el alma ver que tus ideas se hacen realidad y mejoran la vida de las personas. <em>Esa conexión con tu creatividad te brinda una paz inmensa.</em></p>
@@ -331,7 +419,8 @@
         name: "Empático", 
         description: `
 <p><strong>Características:</strong> Tienes una sensibilidad especial para entender a los demás. Siempre estás atento a los sentimientos de quienes te rodean y sabes escuchar de verdad. <em>Tu capacidad para conectar con las emociones es un rasgo que te define.</em></p>
-<p><strong>Trabajos que puedes ejercer:</strong> Puedes trabajar como psicólogo, trabajador social o coach de vida. <br><strong>Como freelancer:</strong> Ofrece asesorías en bienestar emocional, coaching personal o redacción de contenido sobre desarrollo personal.</p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes trabajar como psicólogo, trabajador social o coach de vida. <br></p>
+<p><strong>Como freelancer:</strong> Ofrece asesorías en bienestar emocional, coaching personal o redacción de contenido sobre desarrollo personal.</p>
 <p><strong>Misión en la vida:</strong> Tu misión es tender puentes y crear ambientes de armonía. Crees que el diálogo y la comprensión son fundamentales para las relaciones. <em>Sentir que puedes aliviar el dolor de otros te impulsa a dar lo mejor de ti.</em></p>
 <p><strong>Aporte a la sociedad:</strong> Con tu capacidad para escuchar y apoyar, ayudas a formar comunidades más unidas y comprensivas. <em>El agradecimiento que recibes te confirma que estás en el camino correcto.</em></p>
 <p><strong>Lo que te llena espiritualmente:</strong> Te llena el corazón ver que tu apoyo contribuye a la paz y la felicidad de los demás. <em>Esa conexión emocional te hace sentir en sintonía con el mundo.</em></p>
@@ -341,7 +430,8 @@
         name: "Líder", 
         description: `
 <p><strong>Características:</strong> Eres carismático y decidido, siempre listo para tomar la iniciativa y unir a las personas. Tienes la habilidad de inspirar a otros y sacar lo mejor de cada uno. <em>Te motiva ver a tu equipo avanzar y alcanzar metas juntos.</em></p>
-<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte como gerente, director o coordinador de proyectos, o incluso liderar tu propio emprendimiento. <br><strong>Como freelancer:</strong> Ofrece servicios de coordinación de equipos, gestión de proyectos o coaching ejecutivo.</p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte como gerente, director o coordinador de proyectos, o incluso liderar tu propio emprendimiento. <br></p>
+<p><strong>Como freelancer:</strong> Ofrece servicios de coordinación de equipos, gestión de proyectos o coaching ejecutivo.</p>
 <p><strong>Misión en la vida:</strong> Tu misión es empoderar a los demás y guiarlos hacia su máximo potencial. Crees en el poder del trabajo en equipo. <em>Sentir que contribuyes al éxito colectivo te llena de orgullo.</em></p>
 <p><strong>Aporte a la sociedad:</strong> Creas ambientes de colaboración y motivación que impulsan el cambio y el progreso. <em>Ver cómo tus esfuerzos unen a la gente te confirma que realmente marcas la diferencia.</em></p>
 <p><strong>Lo que te llena espiritualmente:</strong> Te llena el alma ver que tu liderazgo transforma vidas y construye un futuro prometedor. <em>Esa conexión con el éxito de otros te brinda un profundo sentido de realización.</em></p>
@@ -351,7 +441,8 @@
         name: "Analítico", 
         description: `
 <p><strong>Características:</strong> Eres meticuloso y detallista, con una mente que descompone los problemas en partes manejables. Te gusta investigar y encontrar la lógica en cada situación. <em>Te emociona descubrir patrones y resolver desafíos con precisión.</em></p>
-<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte como científico de datos, analista de mercado o consultor en investigación. <br><strong>Como freelancer:</strong> Ofrece análisis de datos, consultoría en inteligencia de negocios o elaboración de informes especializados.</p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte como científico de datos, analista de mercado o consultor en investigación. <br></p>
+<p><strong>Como freelancer:</strong> Ofrece análisis de datos, consultoría en inteligencia de negocios o elaboración de informes especializados.</p>
 <p><strong>Misión en la vida:</strong> Buscas la verdad y la claridad en todo lo que haces. Crees que el conocimiento bien aplicado puede transformar realidades. <em>Sentir que tus análisis ayudan a tomar mejores decisiones te llena de propósito.</em></p>
 <p><strong>Aporte a la sociedad:</strong> Con tu capacidad para analizar, conviertes la incertidumbre en certeza y ayudas a que se tomen decisiones informadas. <em>Ver cómo tu trabajo mejora procesos te inspira a seguir adelante.</em></p>
 <p><strong>Lo que te llena espiritualmente:</strong> Te llena el alma ver que el poder del conocimiento se traduce en un impacto positivo. <em>Esa conexión con el saber te hace sentir realizado y en paz.</em></p>
@@ -361,7 +452,8 @@
         name: "Creativo", 
         description: `
 <p><strong>Características:</strong> Ves la belleza en lo cotidiano y transformas lo ordinario en algo extraordinario. Tu imaginación es tu mejor herramienta y siempre encuentras formas originales de expresarte. <em>Te emociona crear y ver el mundo con un toque artístico.</em></p>
-<p><strong>Trabajos que puedes ejercer:</strong> Puedes desarrollarte como diseñador gráfico, artista, director creativo o publicista. <br><strong>Como freelancer:</strong> Ofrece servicios de diseño gráfico, producción audiovisual, redacción creativa o publicidad digital.</p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes desarrollarte como diseñador gráfico, artista, director creativo o publicista. <br></p>
+<p><strong>Como freelancer:</strong> Ofrece servicios de diseño gráfico, producción audiovisual, redacción creativa o publicidad digital.</p>
 <p><strong>Misión en la vida:</strong> Tu misión es inspirar y transformar la realidad a través del arte y la creatividad. Crees que cada obra puede cambiar la manera de ver el mundo. <em>Sentir que tus creaciones impactan positivamente en la vida de otros te llena de inspiración.</em></p>
 <p><strong>Aporte a la sociedad:</strong> Con tu arte, abres nuevas perspectivas y motivas a las personas a apreciar la belleza en cada detalle. <em>La emoción de ver cómo tus obras generan sentimientos te hace vibrar.</em></p>
 <p><strong>Lo que te llena espiritualmente:</strong> Te llena el alma ver que cada trazo y cada idea se convierten en obras que inspiran y transforman. <em>Esa conexión íntima con tu creatividad te hace sentir pleno.</em></p>
@@ -371,7 +463,8 @@
         name: "Aventurero", 
         description: `
 <p><strong>Características:</strong> Vives cada día como una gran aventura. Te encanta explorar, descubrir y romper la rutina. Tu espíritu libre y curioso te impulsa a buscar siempre lo nuevo. <em>La emoción de vivir experiencias únicas te llena de vitalidad.</em></p>
-<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte en roles relacionados con el turismo, la coordinación de eventos de aventura o actividades al aire libre. <br><strong>Como freelancer:</strong> Ofrece servicios como guía turístico independiente, organización de eventos de aventura o fotografía de viajes.</p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte en roles relacionados con el turismo, la coordinación de eventos de aventura o actividades al aire libre. <br></p>
+<p><strong>Como freelancer:</strong> Ofrece servicios como guía turístico independiente, organización de eventos de aventura o fotografía de viajes.</p>
 <p><strong>Misión en la vida:</strong> Tu misión es descubrir lo desconocido y compartir esas experiencias. Crees que salir de la zona de confort es clave para crecer como persona. <em>Sentir que cada aventura te enseña algo nuevo te impulsa a seguir explorando.</em></p>
 <p><strong>Aporte a la sociedad:</strong> Inspiras a otros a vivir intensamente y a atreverse a romper sus propios límites. <em>Ver cómo animas a la gente a descubrir el mundo te llena de satisfacción.</em></p>
 <p><strong>Lo que te llena espiritualmente:</strong> Te llena el alma la conexión con la naturaleza y la sensación de libertad al explorar. <em>Esa sensación de vivir plenamente te hace sentir en paz contigo mismo.</em></p>
@@ -381,7 +474,8 @@
         name: "Pacificador", 
         description: `
 <p><strong>Características:</strong> Tienes un don especial para generar armonía donde hay conflicto. Eres calmado y empático, y sabes mediar entre puntos de vista distintos. <em>Tu forma de ser transmite tranquilidad y comprensión.</em></p>
-<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte como diplomático, mediador o consultor en relaciones laborales. <br><strong>Como freelancer:</strong> Ofrece servicios de mediación independiente, consultoría en resolución de conflictos o asesoría en recursos humanos.</p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes desempeñarte como diplomático, mediador o consultor en relaciones laborales. <br></p>
+<p><strong>Como freelancer:</strong> Ofrece servicios de mediación independiente, consultoría en resolución de conflictos o asesoría en recursos humanos.</p>
 <p><strong>Misión en la vida:</strong> Tu misión es tender puentes y promover el entendimiento entre las personas. Crees que el diálogo y la empatía son fundamentales para resolver conflictos. <em>Sentir que transformas tensiones en consensos te motiva a ayudar a los demás.</em></p>
 <p><strong>Aporte a la sociedad:</strong> Con tu capacidad para mediar, creas ambientes colaborativos y respetuosos que benefician a la comunidad. <em>Ver cómo se restauran relaciones gracias a tu intervención te llena de satisfacción.</em></p>
 <p><strong>Lo que te llena espiritualmente:</strong> Te llena el corazón ver que tus acciones contribuyen a la paz y la unidad. <em>Esa conexión con el bienestar de otros te hace sentir profundamente realizado.</em></p>
@@ -391,7 +485,8 @@
         name: "Educador", 
         description: `
 <p><strong>Características:</strong> Tienes una gran pasión por compartir conocimientos y ver crecer a los demás. Eres paciente, claro y siempre dispuesto a explicar las cosas de forma sencilla. <em>Te conmueve la idea de que cada persona pueda aprender y mejorar.</em></p>
-<p><strong>Trabajos que puedes ejercer:</strong> Puedes trabajar como profesor, tutor, mentor o conferencista en talleres y seminarios. <br><strong>Como freelancer:</strong> Ofrece cursos en línea, tutorías virtuales o creación de contenido educativo.</p>
+<p><strong>Trabajos que puedes ejercer:</strong> Puedes trabajar como profesor, tutor, mentor o conferencista en talleres y seminarios. <br></p>
+<p><strong>Como freelancer:</strong> Ofrece cursos en línea, tutorías virtuales o creación de contenido educativo.</p>
 <p><strong>Misión en la vida:</strong> Tu misión es iluminar el camino del aprendizaje y fomentar el pensamiento crítico. Crees que la educación es la clave para un futuro mejor. <em>Sentir que contribuyes al desarrollo de otros te impulsa a seguir educando.</em></p>
 <p><strong>Aporte a la sociedad:</strong> Con tu enseñanza, dejas un legado de conocimientos y valores que perduran en el tiempo. Ayudas a romper barreras y a construir una sociedad más informada. <em>Ver cómo tus alumnos crecen te llena de orgullo.</em></p>
 <p><strong>Lo que te llena espiritualmente:</strong> Te llena el alma ver que, a través de la educación, puedes transformar vidas y abrir nuevos horizontes. <em>Esa conexión con el saber te hace sentir profundamente realizado.</em></p>
@@ -517,7 +612,6 @@
       
       const bestProfile = profiles.find(p => p.name === winnerName);
       const profileDiv = document.getElementById("profile");
-      // Se añade solo un encabezado, sin repetirlo en la descripción
       profileDiv.innerHTML = `<h3><u>${bestProfile.name}</u></h3>` + bestProfile.description;
       
       const porcentajeDiv = document.getElementById("porcentaje");
@@ -536,30 +630,64 @@
       document.getElementById("quiz").style.display = "block";
       displayQuestion();
     }
-    
-    // Función para guardar/Imprimir PDF sin los botones
-    function savePDF() {
-      const btnContainer = document.getElementById("result-buttons");
-      // Ocultamos los botones
-      btnContainer.style.display = "none";
-      
-      // Usamos html2canvas para capturar el contenedor de resultados
-      setTimeout(function() {
-        html2canvas(document.getElementById("result-container"), { useCORS: true, scrollY: -window.scrollY }).then(canvas => {
-          // Restauramos los botones
-          btnContainer.style.display = "block";
-          const imgData = canvas.toDataURL("image/jpeg", 1.0);
-          const { jsPDF } = window.jspdf;
-          const pdf = new jsPDF('p', 'mm', 'a4');
-          const pdfWidth = pdf.internal.pageSize.getWidth();
-          const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-          pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-          pdf.save("ikigai_result.pdf");
-        });
-      }, 1000);
+
+function guardarImagen() {
+  const elemento = document.getElementById("result-container");
+  const botones = document.getElementById("result-buttons");
+  const originalStyles = {
+    overflow: elemento.style.overflow,
+    height: elemento.style.height
+  };
+
+  // Preparar elemento para captura
+  botones.style.display = "none";
+  elemento.style.overflow = "visible"; // Asegurar contenido no recortado
+  elemento.style.height = "auto"; // Altura natural del contenido
+
+  html2canvas(elemento, {
+    scale: 2,
+    logging: true,
+    useCORS: true,
+    backgroundColor: "#DDC08C",
+    ignoreElements: (element) => element.id === "result-buttons",
+    onclone: (clonedDoc, element) => {
+      // Forzar estilos críticos en el clon
+      element.style.backgroundColor = "#DDC08C";
+      element.style.color = "#3E2723";
+      element.style.fontFamily = "'Poppins', sans-serif";
+      element.style.width = "900px"; // Ancho fijo del contenedor
+      clonedDoc.querySelectorAll('*').forEach(node => {
+        node.style.transform = "none !important";
+        node.style.animation = "none !important";
+        node.style.transition = "none !important";
+      });
     }
+  }).then(canvas => {
+    // Restaurar estilos originales
+    botones.style.display = "flex";
+    elemento.style.overflow = originalStyles.overflow;
+    elemento.style.height = originalStyles.height;
+
+    // Crear canvas con relación de aspecto correcta
+    const imgWidth = elemento.offsetWidth;
+    const imgHeight = elemento.scrollHeight; // Usar altura total del contenido
     
-    // La función startQuiz() se invoca desde el botón de la pantalla de bienvenida.
+    const finalCanvas = document.createElement('canvas');
+    finalCanvas.width = imgWidth * 2;
+    finalCanvas.height = imgHeight * 2;
+    
+    const ctx = finalCanvas.getContext('2d');
+    ctx.scale(2, 2);
+    ctx.drawImage(canvas, 0, 0, imgWidth, imgHeight);
+    
+    // Generar imagen
+    const enlace = document.createElement('a');
+    enlace.download = `Ikigai_${userNombre}.png`;
+    enlace.href = finalCanvas.toDataURL('image/png', 1.0);
+    enlace.click();
+  });
+}
+
   </script>
 </body>
 </html>
